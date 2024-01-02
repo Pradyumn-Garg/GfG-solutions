@@ -14,35 +14,48 @@ class Solution{
     // r : ending index of the array i.e size-1
     // k : find kth smallest element and return using this function
     int kthSmallest(int arr[], int l, int r, int k) {
-        int e=INT_MIN,s=INT_MAX;
-        for(int i=0;i<r+1;i++){
-            e=max(arr[i],e);
-            s=min(arr[i],s);
+        int low=INT_MAX;
+        int high=INT_MIN;
+        for(int i=l;i<=r;i++){
+            low=min(low,arr[i]);
+            high=max(high,arr[i]);
         }
-        while(s<=e){
-            int mid=(s+e)/2;
-            int count=search(mid,r,arr);
-            if(count<k){
-                s=mid+1;
+        while(low<high){
+            int mid=(low+high)/2;
+            int res=check(arr,mid,r+1,k);
+            if(res==1){
+                return mid;
             }
-            else{
-                if(search(mid-1,r,arr)<k){
-                    return mid;
-                }
-                e=mid-1;
+            if(res==-1){
+                low=mid+1;
+                continue;
+            }
+            if(res==0){
+                high=mid-1;
+                continue;
             }
         }
     }
     
-    int search(int x, int r, int arr[]){
-        int count=0;
-        for(int i=0;i<r+1;i++){
-            if(arr[i]<=x){
-                count++;
+    int check(int arr[], int x, int n, int k){
+        int count_low=0,count_eq=0;
+        for(int i=0;i<n;i++){
+            if(arr[i]<x){
+                count_low++;
+            }
+            if(arr[i]==x){
+                count_eq++;
             }
         }
-        return count;
+        if(count_low>=k){
+            return 0;
+        }
+        if(count_low+count_eq>=k){
+            return 1;
+        }
+        return -1;
     }
+    
 };
 
 //{ Driver Code Starts.
